@@ -1,0 +1,64 @@
+@host = http://localhost:8080/rsStore
+
+@id = 1
+
+@token = yHWBFXSj560j8jRc0C-HQAFW5tnokPdXbbdIsgPnl3c=
+GET {{host}}/products
+
+GET {{host}}/products/1
+
+POST {{host}}/products
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Product 1",
+  "description": "Product 1 description",
+  "price": 100.00,
+  "region": "ALGARVE",
+  "listOfImagesUrls": ["https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"]  
+}
+
+PUT {{host}}/products/{{id}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Product 1",
+  "description": "Product 1 description",
+  "price": 110.00,
+  "region": "ALGARVE",
+  "listOfImagesUrls": ["https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"]  
+}
+
+DELETE {{host}}/products/{{id}}
+
+POST {{host}}/user
+Content-Type: application/json
+
+{
+  "name": "John Doe",
+  "email": "jonhdoe@gmail.com",
+  "password": "123456"
+}
+
+POST {{host}}/user/login
+Content-Type: application/json
+
+{
+  "email": "jonhdoe@gmail.com",
+  "password": "123456"
+}
+
+POST {{host}}/images/upload
+Content-Type: multipart/form-data; boundary=boundary123
+
+--boundary123
+Content-Disposition: form-data; name="image"; filename="Logotipo_RS_Original.png"
+Content-Type: image/png
+
+< ./Logotipo_RS_Original.png
+--boundary123--
+
+POST {{host}}/images/delete/1PzWZ3Bw6EUj5XayU8q1rRnuzNZqAIQzn
+
