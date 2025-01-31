@@ -7,7 +7,7 @@ data class Product (
     val description: String,
     val region: Region,
     val price: Double,
-    val listOfImagesUrls: List<String>
+    val listOfImagesUrls: List<String> = emptyList()
 ){
     init {
         require(price > 0.00) { "Invalid price" }

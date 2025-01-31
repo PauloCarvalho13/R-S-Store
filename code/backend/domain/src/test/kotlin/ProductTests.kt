@@ -1,4 +1,5 @@
 import org.junit.jupiter.api.Test
+import pt.rs.Announcer
 import pt.rs.Product
 import pt.rs.Region
 import kotlin.test.assertFailsWith
@@ -8,7 +9,7 @@ class ProductTests {
     fun `create invalid product`(){
         assertFailsWith<IllegalArgumentException> {
             val sut = Product(
-                1,
+                Announcer(1, "Greg", "greg@gmail.com"),
                 1,
                 "",
                 " Test ",
@@ -18,7 +19,7 @@ class ProductTests {
         }
         assertFailsWith<IllegalArgumentException> {
             val sut2 = Product(
-                1,
+                Announcer(1, "Greg", "greg@gmail.com"),
                 2,
                 "Milk",
                 " Test ",
@@ -31,7 +32,7 @@ class ProductTests {
     @Test
     fun `create valid product`(){
         val sut = Product(
-            2,
+            Announcer(2, "John", "john@gmail.com"),
             3,
             "Bread",
             "Home Made",
