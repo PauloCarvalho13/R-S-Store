@@ -18,7 +18,7 @@ import pt.rs.user.AuthenticatedUser
 
 @Suppress("unused")
 @RestController
-@RequestMapping("/rsStore")
+@RequestMapping("/api")
 class ProductsController(
     private val productService: ProductService
 ) {
@@ -32,14 +32,14 @@ class ProductsController(
                     product.name,
                     product.price,
                     product.region,
-                    product.listOfImagesUrls.first()
+                    product.imagesDetails.first()
                 )
             })
-            is Failure -> throw IllegalStateException()
+            is Failure -> Problem.InternalServerError.response(HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 
-    @GetMapping("/products/search")
+    @PostMapping("/products/search")
     fun getProductsByQuery(@RequestBody query: ProductInputQuery): ResponseEntity<Any> {
         return when(val products = productService.filterProducts(query.region, query.minPrice, query.maxPrice)) {
             is Success -> ResponseEntity.ok(products.value.map { product ->
@@ -48,10 +48,10 @@ class ProductsController(
                     product.name,
                     product.price,
                     product.region,
-                    product.listOfImagesUrls.first()
+                    product.imagesDetails.first()
                 )
             })
-            is Failure -> throw IllegalStateException()
+            is Failure -> Problem.InternalServerError.response(HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 
@@ -61,29 +61,50 @@ class ProductsController(
             is Success -> ResponseEntity.ok(product.value.let {
                 ProductDetails(
                     it.announcer,
+                    it.id,
                     it.name,
                     it.description,
                     it.price,
                     it.region,
-                    it.listOfImagesUrls
+                    it.imagesDetails
                 )
             })
-            is Failure -> throw IllegalStateException("Product not found")
+            is Failure -> Problem.ProductNotFound.response(HttpStatus.NOT_FOUND)
         }
     }
 
     @PostMapping("/products")
     fun createProduct(@RequestBody prod: ProductInput, announcer: AuthenticatedUser): ResponseEntity<Any> {
         return when(val product = productService.createProduct(announcer.user, prod.name, prod.description, prod.region,  prod.price, prod.listOfImagesUrls)) {
-            is Success -> ResponseEntity.ok(product.value)
-            is Failure -> throw IllegalStateException("Product creation failed")
+            is Success -> ResponseEntity.ok(product.value.let {
+                ProductDetails(
+                    it.announcer,
+                    it.id,
+                    it.name,
+                    it.description,
+                    it.price,
+                    it.region,
+                    it.imagesDetails
+                )
+            })
+            is Failure -> Problem.InternalServerError.response(HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 
     @PutMapping("/products/{id}")
-    fun editProduct(@PathVariable id: Int, @RequestBody prod: ProductUpdateInput, authUser: AuthenticatedUser): ResponseEntity<Any> {
-       return when(val updated = productService.updateProduct(authUser.user, prod.announcer, id, prod.name, prod.description, prod.price, prod.region, prod.listOfImagesUrls)) {
-            is Success -> ResponseEntity.ok(updated.value)
+    fun editProduct(@PathVariable id: Int, @RequestBody prod: ProductInput, authUser: AuthenticatedUser): ResponseEntity<Any> {
+       return when(val updated = productService.updateProduct(authUser.user, id, prod.name, prod.description, prod.price, prod.region, prod.listOfImagesUrls)) {
+            is Success -> ResponseEntity.ok(updated.value.let {
+                ProductDetails(
+                    it.announcer,
+                    it.id,
+                    it.name,
+                    it.description,
+                    it.price,
+                    it.region,
+                    it.imagesDetails
+                )
+            })
             is Failure -> when(updated.value) {
                 is ProductError.NoPermissionToUpdateProduct -> Problem.NoPermissionToUpdateProduct.response(HttpStatus.FORBIDDEN)
                 else -> Problem.ProductNotFound.response(HttpStatus.NOT_FOUND)
@@ -94,11 +115,37 @@ class ProductsController(
     @DeleteMapping("/products/{id}")
     fun deleteProduct(@PathVariable id: Int, authUser: AuthenticatedUser): ResponseEntity<Any> {
         return when(val deleted = productService.deleteProduct(authUser.user, id)) {
-            is Success -> ResponseEntity.ok(deleted.value)
+            is Success -> ResponseEntity.ok(deleted.value.let {
+                ProductDetails(
+                    it.announcer,
+                    it.id,
+                    it.name,
+                    it.description,
+                    it.price,
+                    it.region,
+                    it.imagesDetails
+                )
+            })
             is Failure -> when(deleted.value) {
                 is ProductError.NoPermissionToDeleteProduct -> Problem.NoPermissionToDeleteProduct.response(HttpStatus.FORBIDDEN)
                 else -> Problem.ProductNotFound.response(HttpStatus.NOT_FOUND)
             }
+        }
+    }
+
+    @GetMapping("/myDashboard")
+    fun getMyDashboard(authUser: AuthenticatedUser): ResponseEntity<Any> {
+        return when(val dashboard = productService.getDashboard(authUser.user)) {
+            is Success -> ResponseEntity.ok(dashboard.value.map {
+                SellerProductInfo(
+                    it.name,
+                    it.description,
+                    it.price,
+                    it.region,
+                    it.imagesDetails
+                )
+            })
+            is Failure -> Problem.InternalServerError.response(HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 }

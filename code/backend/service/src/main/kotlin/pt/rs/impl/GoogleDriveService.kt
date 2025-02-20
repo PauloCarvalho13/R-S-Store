@@ -33,6 +33,8 @@ class GoogleDriveService: ImageService {
 
     override fun uploadImage(file: MultipartFile): Map<String,String> {
         val driveService = getDriveService()
+        if (file.isEmpty) throw Exception("File is empty")
+        if (file.size > 5 * 1024 * 1024) throw Exception("File is too large")
 
         // Create file metadata
         val fileMetadata = File().apply {

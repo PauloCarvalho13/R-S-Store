@@ -1,5 +1,6 @@
 package pt.rs.model
 
+import pt.rs.ImageDetails
 import pt.rs.Region
 
 data class ProductInput(
@@ -7,5 +8,5 @@ data class ProductInput(
     val description: String,
     val price: Double,
     val region: Region,
-    val listOfImagesUrls: List<String>
+    val listOfImagesUrls: List<ImageDetails>
 )

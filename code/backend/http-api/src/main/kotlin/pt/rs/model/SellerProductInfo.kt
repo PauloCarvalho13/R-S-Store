@@ -1,13 +1,12 @@
 package pt.rs.model
 
+import pt.rs.ImageDetails
 import pt.rs.Region
-import pt.rs.Announcer
 
-data class ProductUpdateInput(
-    val announcer: Announcer,
+data class SellerProductInfo(
     val name: String,
     val description: String,
     val price: Double,
     val region: Region,
-    val listOfImagesUrls: List<String>
+    val imagesUrls: List<ImageDetails>
 )

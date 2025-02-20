@@ -8,14 +8,22 @@ interface ProductService {
 
     /**
      * Create a new product
+     * @param user the user creating the product
      * @param name the name of the product
      * @param description the description of the product
      * @param region the region of the product
      * @param price the price of the product
-     * @param listOfImagesUrls the list of images urls of the product
+     * @param imagesDetails the list of images urls of the product
      * @return either the created product or an error
      */
-    fun createProduct(user: User, name: String, description: String, region: Region, price:Double, listOfImagesUrls:List<String>): Either<ProductError, Product>
+    fun createProduct(
+        user: User,
+        name: String,
+        description: String,
+        region: Region,
+        price:Double,
+        imagesDetails: List<ImageDetails>
+    ): Either<ProductError, Product>
 
     /**
      * Get the details of a product
@@ -26,18 +34,28 @@ interface ProductService {
 
     /**
      * Update the details of a product
+     * @param user the user updating the product
      * @param id the id of the product
      * @param name the name of the product
      * @param description the description of the product
      * @param price the price of the product
      * @param region the region of the product
-     * @param listOfImagesUrls the list of images urls of the product
+     * @param imagesDetails the list of images urls of the product
      * @return either the updated product or an error
      */
-    fun updateProduct(user: User, announcer: Announcer, id:Int, name: String, description: String, price: Double, region: Region, listOfImagesUrls: List<String>): Either<ProductError, Product>
+    fun updateProduct(
+        user: User,
+        id:Int,
+        name: String,
+        description: String,
+        price: Double,
+        region: Region,
+        imagesDetails: List<ImageDetails>
+    ): Either<ProductError, Product>
 
     /**
      * Delete a product
+     * @param user the user deleting the product
      * @param productId the id of the product to delete
      * @return either the deleted product or an error
      */

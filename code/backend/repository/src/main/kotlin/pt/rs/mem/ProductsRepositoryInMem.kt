@@ -14,7 +14,7 @@ class ProductsRepositoryInMem: ProductsRepository {
         description: String,
         region: Region,
         price: Double,
-        listOfImagesUrls: List<String>
+        imagesDetails: List<ImageDetails>
     ): Product {
         val product = Product(
             id = products.size + 1,
@@ -27,7 +27,7 @@ class ProductsRepositoryInMem: ProductsRepository {
                 name = user.name,
                 email = user.email
             ),
-            listOfImagesUrls = listOfImagesUrls
+            imagesDetails = imagesDetails
         )
         products.add(product)
         return product

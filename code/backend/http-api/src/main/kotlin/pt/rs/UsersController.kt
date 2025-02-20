@@ -1,5 +1,6 @@
 package pt.rs
 
+import org.springframework.http.HttpHeaders
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -14,13 +15,13 @@ import pt.rs.user.AuthenticatedUser
 import pt.rs.model.Problem
 import pt.rs.model.UserCreationInput
 import pt.rs.model.UserCredentials
+import pt.rs.model.UserInfo
 
 @Suppress("unused")
 @RestController
 @RequestMapping("/rsStore")
 class UsersController(
-    private val userService: UserService,
-    private val productService: ProductService
+    private val userService: UserService
 ) {
     @PostMapping("/user")
     fun createUser(@RequestBody ui: UserCreationInput): ResponseEntity<*> {
@@ -40,22 +41,45 @@ class UsersController(
         }
     }
 
-    @PostMapping("/user/login")
+    @PostMapping("/login")
     fun loginUser(@RequestBody uc: UserCredentials): ResponseEntity<Any> {
         return when (val tokenResult = userService.createToken(uc.email, uc.password)) {
-            is Success -> ResponseEntity.status(HttpStatus.OK).body(tokenResult.value.tokenValue)
+            is Success -> {
+                val token = tokenResult.value.tokenValue
+                ResponseEntity
+                    .status(HttpStatus.OK)
+                    .header(HttpHeaders.SET_COOKIE, createAuthCookie(token))
+                    .body("Login successful")
+            }
             is Failure -> Problem.UserOrPasswordAreInvalid.response(HttpStatus.BAD_REQUEST)
         }
     }
 
-    @PostMapping("/user/logout")
-    fun logoutUser(user: AuthenticatedUser) = userService.revokeToken(user.token)
+    @PostMapping("/logout")
+    fun logoutUser(user: AuthenticatedUser): ResponseEntity<Any> {
+        userService.revokeToken(user.token)
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .header(HttpHeaders.SET_COOKIE, clearAuthCookie())
+            .body("Logout successful")
+    }
 
-    @GetMapping("/myDashboard")
-    fun getMyDashboard(authUser: AuthenticatedUser): ResponseEntity<Any> {
-        return when(val dashboard = productService.getDashboard(authUser.user)) {
-            is Success -> ResponseEntity.ok(dashboard.value)
-            is Failure -> throw IllegalStateException()
-        }
+    @GetMapping("/user")
+    fun userInfo(authUser: AuthenticatedUser): ResponseEntity<Any> {
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(UserInfo(
+                authUser.user.id,
+                authUser.user.name,
+                authUser.user.email
+            ))
+    }
+
+    private fun createAuthCookie(token: String): String {
+        return "auth_token=$token; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=3600"
+    }
+
+    private fun clearAuthCookie(): String {
+        return "auth_token=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0"
     }
 }

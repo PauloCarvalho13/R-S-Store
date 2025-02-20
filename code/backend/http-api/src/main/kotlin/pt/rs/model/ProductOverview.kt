@@ -1,5 +1,6 @@
 package pt.rs.model
 
+import pt.rs.ImageDetails
 import pt.rs.Region
 
 data class ProductOverview(
@@ -7,5 +8,5 @@ data class ProductOverview(
     val name: String,
     val price: Double,
     val region: Region,
-    val imageUrl: String
+    val image: ImageDetails
 )

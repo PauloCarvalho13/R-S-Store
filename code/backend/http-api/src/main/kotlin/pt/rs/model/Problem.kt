@@ -34,5 +34,8 @@ sealed class Problem(typedUri:URI){
     // Request problems
     data object InvalidRequestContent : Problem(URI("${PROBLEM_URI_PATH}/invalid-request-content"))
 
+    // Internal problems
+    data object InternalServerError : Problem(URI("${PROBLEM_URI_PATH}/internal-server-error"))
+
 }
 

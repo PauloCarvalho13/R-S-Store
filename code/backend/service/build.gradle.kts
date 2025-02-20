@@ -46,7 +46,11 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
+    environment("DB_URL", "jdbc:postgresql://localhost:5432/db?user=dbuser&password=changeit")
+    dependsOn(":repository:dbTestsWait")
+    finalizedBy(":repository:dbTestsDown")
 }
+
 kotlin {
     jvmToolchain(21)
 }

@@ -1,5 +1,6 @@
 import org.junit.jupiter.api.Test
 import pt.rs.Announcer
+import pt.rs.ImageDetails
 import pt.rs.Product
 import pt.rs.Region
 import kotlin.test.assertFailsWith
@@ -15,7 +16,7 @@ class ProductTests {
                 " Test ",
                 Region.CENTER,
                 19.00,
-                listOf("htt://dummyImage:8080/ "))
+                listOf(ImageDetails("abc","htt://dummyImage:8080/ ")))
         }
         assertFailsWith<IllegalArgumentException> {
             val sut2 = Product(
@@ -25,7 +26,7 @@ class ProductTests {
                 " Test ",
                 Region.AZORES,
                 00.00,
-                listOf("htt://dummyImage:8080/"))
+                listOf(ImageDetails("abc","htt://dummyImage:8080/ ")))
         }
     }
 
@@ -38,7 +39,7 @@ class ProductTests {
             "Home Made",
             Region.ALENTEJO,
             12.00,
-            listOf("htt://dummyImage:8080/"))
+            listOf(ImageDetails("abc","htt://dummyImage:8080/ ")))
         assert(sut.region == Region.ALENTEJO)
     }
 }

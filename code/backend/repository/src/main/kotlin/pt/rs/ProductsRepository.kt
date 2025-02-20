@@ -10,9 +10,9 @@ interface ProductsRepository: Repository<Product>{
      * @param description the description of the product
      * @param region the region of the product
      * @param price the price of the product
-     * @param listOfImagesUrls the list of images urls of the product
+     * @param imagesDetails the list of images urls of the product
      */
-    fun createProduct(user: User, name: String, description: String, region: Region, price: Double, listOfImagesUrls:List<String> = emptyList()): Product
+    fun createProduct(user: User, name: String, description: String, region: Region, price: Double, imagesDetails:List<ImageDetails>): Product
 
     /**
      * Find a product by the passed parameters

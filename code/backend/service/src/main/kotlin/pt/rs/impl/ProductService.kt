@@ -22,9 +22,9 @@ class ProductsService(
         description: String,
         region: Region,
         price: Double,
-        listOfImagesUrls: List<String>
+        imagesDetails: List<ImageDetails>
     ): Either<ProductError, Product> = trxManager.run {
-        val product = repoProducts.createProduct(user, name, description, region, price, listOfImagesUrls)
+        val product = repoProducts.createProduct(user, name, description, region, price, imagesDetails)
         success(product)
     }
 
@@ -35,22 +35,21 @@ class ProductsService(
 
     override fun updateProduct(
         user: User,
-        announcer: Announcer,
         id: Int,
         name: String,
         description: String,
         price: Double,
         region: Region,
-        listOfImagesUrls: List<String>
+        imagesDetails: List<ImageDetails>
     ): Either<ProductError, Product> = trxManager.run {
         val product = repoProducts.findById(id) ?: return@run failure(ProductError.ProductNotFound)
-        if (announcer.userId != user.id) return@run failure(ProductError.NoPermissionToUpdateProduct)
+        if (product.announcer.userId != user.id) return@run failure(ProductError.NoPermissionToUpdateProduct)
         val updatedProduct = product.copy(
             name = name,
             description = description,
             price = price,
             region = region,
-            listOfImagesUrls = listOfImagesUrls
+            imagesDetails = imagesDetails
         )
         repoProducts.save(updatedProduct)
         success(updatedProduct)
