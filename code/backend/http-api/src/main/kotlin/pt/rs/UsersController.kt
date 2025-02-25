@@ -1,5 +1,8 @@
 package pt.rs
 
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.responses.ApiResponses
 import org.springframework.http.HttpHeaders
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
@@ -19,11 +22,18 @@ import pt.rs.model.UserInfo
 
 @Suppress("unused")
 @RestController
-@RequestMapping("/rsStore")
+@RequestMapping("/api")
 class UsersController(
     private val userService: UserService
 ) {
-    @PostMapping("/user")
+
+    @Operation(summary = "Create a new user")
+    @ApiResponses(value = [
+        ApiResponse(responseCode = "201", description = "User created"),
+        ApiResponse(responseCode = "422", description = "User already exists"),
+        ApiResponse(responseCode = "406", description = "Insecure password")
+    ])
+    @PostMapping("/user", consumes = ["application/json"])
     fun createUser(@RequestBody ui: UserCreationInput): ResponseEntity<*> {
         return when (val user = userService.createUser(ui.name,ui.email, ui.password)) {
             is Success -> {
@@ -41,7 +51,12 @@ class UsersController(
         }
     }
 
-    @PostMapping("/login")
+    @Operation(summary = "Login user")
+    @ApiResponses(value = [
+        ApiResponse(responseCode = "200", description = "Login successful"),
+        ApiResponse(responseCode = "400", description = "User or password are invalid")
+    ])
+    @PostMapping("/login", consumes = ["application/json"])
     fun loginUser(@RequestBody uc: UserCredentials): ResponseEntity<Any> {
         return when (val tokenResult = userService.createToken(uc.email, uc.password)) {
             is Success -> {
@@ -55,7 +70,11 @@ class UsersController(
         }
     }
 
-    @PostMapping("/logout")
+    @Operation(summary = "Logout user")
+    @ApiResponses(value = [
+        ApiResponse(responseCode = "200", description = "Logout successful")
+    ])
+    @PostMapping("/logout", consumes = ["application/json"])
     fun logoutUser(user: AuthenticatedUser): ResponseEntity<Any> {
         userService.revokeToken(user.token)
         return ResponseEntity
@@ -64,7 +83,11 @@ class UsersController(
             .body("Logout successful")
     }
 
-    @GetMapping("/user")
+    @Operation(summary = "Get user info")
+    @ApiResponses(value = [
+        ApiResponse(responseCode = "200", description = "User info")
+    ])
+    @GetMapping("/user", produces = ["application/json"])
     fun userInfo(authUser: AuthenticatedUser): ResponseEntity<Any> {
         return ResponseEntity
             .status(HttpStatus.OK)

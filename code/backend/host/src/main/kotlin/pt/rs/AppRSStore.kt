@@ -1,6 +1,7 @@
 package pt.rs
 
 import kotlinx.datetime.Clock
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.context.annotation.Bean
@@ -13,6 +14,11 @@ import pt.rs.mem.TransactionManagerInMem
 import pt.rs.user.Sha256TokenEncoder
 import pt.rs.user.UsersDomainConfig
 import kotlin.time.Duration.Companion.hours
+import io.swagger.v3.oas.models.info.Contact
+import io.swagger.v3.oas.models.info.Info
+import io.swagger.v3.oas.models.info.License
+import io.swagger.v3.oas.models.OpenAPI
+import org.springdoc.core.models.GroupedOpenApi
 
 @Configuration
 @Suppress("unused")
@@ -26,6 +32,38 @@ class PipelineConfig(
 
     override fun addArgumentResolvers(resolvers: MutableList<HandlerMethodArgumentResolver>) {
         resolvers.add(authArgumentResolver)
+    }
+}
+@Suppress("unused")
+@Configuration
+class ApplicationConfig{
+    @Bean
+    fun publicApi(): GroupedOpenApi {
+        return GroupedOpenApi.builder()
+            .group("base-service")
+            .pathsToMatch("/**")
+            .build()
+    }
+
+    @Bean
+    fun customOpenAPI(
+        @Value("\${application-description}") appDescription: String?, @Value(
+            "\${application-version}"
+        ) appVersion: String?
+    ): OpenAPI {
+        val contact = Contact()
+        contact.email = " "
+        contact.name = "Paulo Carvalho"
+        return OpenAPI()
+            .info(
+                Info()
+                    .title("Online Store API")
+                    .version(appVersion)
+                    .description(appDescription)
+                    .termsOfService("http://swagger.io/terms/")
+                    .license(License().name("Apache 2.0").url("http://springdoc.org"))
+                    .contact(contact)
+            )
     }
 }
 

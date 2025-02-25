@@ -19,6 +19,8 @@ The _frontend application_ will run on the end user browsers and will be respons
 
 ## Functionalities
 
+* Api Documentation: [Swagger](http://localhost:8080/swagger-ui/index.html)
+
 ### User interface
 
 The user interface provided by the _frontend application_ allow the following interactions:
