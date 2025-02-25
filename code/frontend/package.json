@@ -2,13 +2,16 @@
   "name": "rs-catalog",
   "version": "1.0.0",
   "description": "Static web page with products that the enterprise R&S sells",
-  "main": "index.js",
+  "main": "index.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack --mode production",
+    "start": "webpack serve"
   },
   "author": "Paulo Carvalho",
   "license": "ISC",
   "devDependencies": {
+    "@types/js-cookie": "^3.0.6",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "ts-loader": "^9.5.1",
@@ -18,7 +21,13 @@
     "webpack-dev-server": "^5.1.0"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/material": "^6.4.4",
+    "axios": "^1.7.9",
+    "js-cookie": "^3.0.5",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.28.0"
   }
 }
