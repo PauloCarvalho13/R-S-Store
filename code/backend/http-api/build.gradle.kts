@@ -18,6 +18,11 @@ dependencies {
     api(project(":service"))
     implementation("org.springframework:spring-webmvc:6.1.13")
 
+    // To generate OpenAPI documentation
+    implementation("org.springdoc:springdoc-openapi-data-rest:1.8.0")
+    implementation("org.springdoc:springdoc-openapi-ui:1.8.0")
+    implementation("org.springdoc:springdoc-openapi-kotlin:1.8.0")
+
     testImplementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-starter-webflux")
